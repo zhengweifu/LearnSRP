@@ -6,7 +6,7 @@
 /obj
 /Temp
 
-/.DS_Store
+.DS_Store
 
 *.sln
 *.csproj
