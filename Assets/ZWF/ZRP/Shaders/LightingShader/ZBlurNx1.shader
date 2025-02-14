@@ -1,4 +1,4 @@
-Shader "ZRP/ZBlurNxN"
+Shader "ZRP/BlurNx1"
 {
     Properties
     {
@@ -14,7 +14,7 @@ Shader "ZRP/ZBlurNxN"
             #pragma vertex vert
             #pragma fragment frag
 
-            #include "ZGlobalUniform.cginc"
+            #include "../../ShaderLibrary/ZGlobalUniform.cginc"
             #include "UnityCG.cginc"
 
             struct appdata
@@ -41,37 +41,46 @@ Shader "ZRP/ZBlurNxN"
 
             float frag (v2f i) : SV_Target
             {
+                /*
                 float2 uv = i.uv;
+                float shadow = 0;
+                float r = 3;
+                for(int i=-r; i<=r; i++)
+                {
+                    float2 offset = float2(i, 0) / float2(_screenWidth, _screenWidth);
+                    shadow += tex2D(_MainTex, uv+offset).r;
+                }
+                shadow /= (2*r+1);
+
+                return shadow;
+                */
+                
+                float2 uv = i.uv;
+
                 float3 normal = tex2D(_gbuffer1, uv).rgb * 2 - 1;
                 float d = UNITY_SAMPLE_DEPTH(tex2D(_sceneDepth, uv));
-                float4 worldPos = mul(_vpMatrixInv, float4(uv * 2 - 1, d, 1));
+                float4 worldPos = mul(_vpMatrixInv, float4(uv*2-1, d, 1));
                 worldPos /= worldPos.w;
-                
-                float weight = 0;
+
                 float shadow = 0;
-                float r = 1;
+                float weight = 0;
+                float r = 3;
+
+                float dis = distance(_WorldSpaceCameraPos.xyz, worldPos.xyz);
+                float radius = 1.0 / (pow(dis, 1.2)*0.01 + 0.01);
+                //radius = 1;
 
                 for(int i=-r; i<=r; i++)
                 {
-                    for(int j=-r; j<=r; j++)
-                    {
-                        float2 offset = float2(i, j) / float2(_screenWidth, _screenWidth);
-                        float2 uv_sample = uv + offset;
-
-                        float3 normal_sample = tex2D(_gbuffer1, uv_sample).rgb * 2 - 1;
-                        float d_sample = UNITY_SAMPLE_DEPTH(tex2D(_sceneDepth, uv_sample));
-                        float4 worldPos_sample = mul(_vpMatrixInv, float4(uv_sample*2-1, d_sample, 1));
-                        worldPos_sample /= worldPos_sample.w;
-
-                        float w = 1.0 / (1.0 + distance(worldPos, worldPos_sample)*0.5);
-
-                        shadow += w * tex2D(_MainTex, uv_sample).r;
-                        weight += w;
-                    }
+                    float2 offset = float2(i, 0) / float2(_screenWidth/4, _screenWidth/4);                   
+                    float2 uv_sample = uv + offset * radius;
+                    shadow += tex2D(_MainTex, uv_sample).r;
+                    weight += 1;
                 }
                 shadow /= weight;
 
                 return shadow;
+                
             }
             ENDCG
         }

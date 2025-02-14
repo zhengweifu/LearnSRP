@@ -1,55 +1,11 @@
-Shader "ZRP/ZGBuffer"
+Shader "ZRP/DeferredBase"
 {
-    Properties
-    {
-        _Diffuse_Tex ("Diffuse Map", 2D) = "white" {}
-        _Metallic_Roughness_Tex ("Metallic Roughness Map", 2D) = "white" {}
-        _Metallic ("Metallic", Range(0, 1)) = 0.0
-        _Roughness ("Roughness", Range(0, 1)) = 0.5
-        _Emission_Tex ("Emission Map", 2D) = "black" {}
-        _Normal_Tex("Normal Map", 2D) = "bump" {}
-         _Occlusion_Tex ("Occlusion Map", 2D) = "white" {}
-    }
     SubShader
     {
-        LOD 100
         Pass
         {
-            Tags { "LightMode"="ZDepthOnly" }
-            CGPROGRAM
-            #pragma vertex vert
-            #pragma fragment frag
-            #include "UnityCG.cginc"
-
-            struct v2f
-            {
-                float4 vertex : SV_POSITION;
-                float2 depth : TEXCOORD0;
-            };
-
-            v2f vert (appdata_base v)
-            {
-                v2f o;
-                o.vertex = UnityObjectToClipPos(v.vertex);
-                o.depth = o.vertex.zw;
-                return o;
-            }
-
-            fixed4 frag (v2f i) : SV_Target
-            {
-                float d = i.depth.x / i.depth.y;
-            #if defined (UNITY_REVERSED_Z)
-                d = 1.0 - d;
-            #endif
-                fixed4 c = EncodeFloatRGBA(d);
-                return c;
-            }
-            ENDCG 
-        }
-
-        Pass
-        {
-            Tags { "LightMode"="ZGBuffer" }
+            name "DEFERRED_BASE"
+            Tags { "LightMode"="DeferredBase" }
             CGPROGRAM
             #pragma vertex vert
             #pragma fragment frag

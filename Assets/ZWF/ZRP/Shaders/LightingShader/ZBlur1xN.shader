@@ -1,4 +1,4 @@
-Shader "ZRP/ZBlur1xN"
+Shader "ZRP/Blur1xN"
 {
     Properties
     {
@@ -14,7 +14,7 @@ Shader "ZRP/ZBlur1xN"
             #pragma vertex vert
             #pragma fragment frag
 
-            #include "ZGlobalUniform.cginc"
+            #include "../../ShaderLibrary/ZGlobalUniform.cginc"
             #include "UnityCG.cginc"
 
             struct appdata

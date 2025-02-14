@@ -181,9 +181,8 @@ namespace ZRP
                 camera.TryGetCullingParameters(out var cullingParameters);
                 var cullingResults = context.Cull(ref cullingParameters);
                 // config settings
-                ShaderTagId shaderTagId = new ShaderTagId("ZDepthOnly");
                 SortingSettings sortingSettings = new SortingSettings(camera);
-                DrawingSettings drawingSettings = new DrawingSettings(shaderTagId, sortingSettings);
+                DrawingSettings drawingSettings = new DrawingSettings(ZShaderTagIDs.DepthOnly, sortingSettings);
                 FilteringSettings filteringSettings = FilteringSettings.defaultValue;
 
                 // 绘制
@@ -214,9 +213,8 @@ namespace ZRP
 
             // 绘制不透明物体
             {
-                ShaderTagId tagId = new ShaderTagId("ZGBuffer");
                 SortingSettings ss = new SortingSettings(camera);
-                DrawingSettings ds = new DrawingSettings(tagId, ss);
+                DrawingSettings ds = new DrawingSettings(ZShaderTagIDs.DeferredBase, ss);
 
                 FilteringSettings fs = new FilteringSettings(RenderQueueRange.opaque);
 
@@ -238,14 +236,14 @@ namespace ZRP
             if(csmSettings.usingShadowMask)
             {
                 // 生成 Mask, 模糊 Mask
-                cmd.Blit(_gbufferIDs[0], tempTex1, new Material(Shader.Find("ZRP/ZPreShadowMapping")));
-                cmd.Blit(tempTex1, tempTex2, new Material(Shader.Find("ZRP/ZBlurNx1")));
-                cmd.Blit(tempTex2, shadowMask, new Material(Shader.Find("ZRP/ZBlur1xN")));
+                cmd.Blit(_gbufferIDs[0], tempTex1, new Material(ZShaderLib.PreShadowMapping));
+                cmd.Blit(tempTex1, tempTex2, new Material(ZShaderLib.BlurNx1));
+                cmd.Blit(tempTex2, shadowMask, new Material(ZShaderLib.Blur1xN));
             }    
 
             // 生成阴影, 模糊阴影
-            cmd.Blit(_gbufferIDs[0], tempTex3, new Material(Shader.Find("ZRP/ZShadowMapping")));
-            cmd.Blit(tempTex3, shadowStrength, new Material(Shader.Find("ZRP/ZBlurNxN")));
+            cmd.Blit(_gbufferIDs[0], tempTex3, new Material(ZShaderLib.ShadowMapping));
+            cmd.Blit(tempTex3, shadowStrength, new Material(ZShaderLib.BlurNxN));
         
             RenderTexture.ReleaseTemporary(tempTex1);
             RenderTexture.ReleaseTemporary(tempTex2);
@@ -258,7 +256,7 @@ namespace ZRP
         {
             var cmd = new CommandBuffer();
             cmd.name = "DeferredLighting";
-            Material mat = new Material(Shader.Find("ZRP/ZDeferredLighting"));
+            Material mat = new Material(ZShaderLib.DeferredLighting);
             cmd.Blit(_gbufferIDs[0], BuiltinRenderTextureType.CameraTarget, mat);
             context.ExecuteCommandBuffer(cmd);
             context.Submit();

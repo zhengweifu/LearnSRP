@@ -1,4 +1,4 @@
-Shader "ZRP/ZDeferredLighting"
+Shader "ZRP/DeferredLighting"
 {
     Properties
     {
@@ -18,8 +18,8 @@ Shader "ZRP/ZDeferredLighting"
 
             #include "UnityCG.cginc"
             #include "UnityLightingCommon.cginc"
-            #include "ZBRDF.cginc"
-            #include "ZGlobalUniform.cginc"
+            #include "../../ShaderLibrary/ZBRDF.cginc"
+            #include "../../ShaderLibrary/ZGlobalUniform.cginc"
             struct appdata
             {
                 float4 vertex : POSITION;

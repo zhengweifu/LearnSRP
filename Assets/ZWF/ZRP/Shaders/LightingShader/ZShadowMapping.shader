@@ -1,4 +1,4 @@
-Shader "ZRP/ZShadowMapping"
+Shader "ZRP/ShadowMapping"
 {
     Properties
     {
@@ -14,10 +14,10 @@ Shader "ZRP/ZShadowMapping"
             #pragma vertex vert
             #pragma fragment frag
 
-            #include "ZGlobalUniform.cginc"
+            #include "../../ShaderLibrary/ZGlobalUniform.cginc"
             #include "UnityCG.cginc"
-            #include "ZShadowMapping.cginc"
-            #include "ZRandom.cginc"            
+            #include "../../ShaderLibrary/ZShadowMapping.cginc"
+            #include "../../ShaderLibrary/ZRandom.cginc"            
 
             struct appdata
             {
