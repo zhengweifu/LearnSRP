@@ -1,0 +1,11 @@
+{
+  "name": "zwf.zrp.Tests",
+  "references": [
+    "zwf.zrp"
+  ],
+  "optionalUnityReferences": [
+    "TestAssemblies"
+  ],
+  "includePlatforms": [],
+  "excludePlatforms": []
+}
