@@ -1,0 +1,12 @@
+/.idea
+/.vscode
+/gpu_captures
+/Library
+/Logs
+/obj
+/Temp
+
+/.DS_Store
+
+*.sln
+*.csproj
